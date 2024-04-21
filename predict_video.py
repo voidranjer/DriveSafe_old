@@ -45,6 +45,7 @@ prediction_counts = {
 	"weaving": [0]
 }
 current_frame = 0
+max_y = 0
 
 # loop over frames from the video file stream
 while True:
@@ -81,7 +82,10 @@ while True:
 
 	# increment the prediction count
 	for l in lb.classes_:
-		prediction_counts[l].append(prediction_counts[l][current_frame - 1] + 1 if label == l else prediction_counts[l][current_frame - 1])
+		new_count = prediction_counts[l][current_frame - 1] + 1 if label == l else prediction_counts[l][current_frame - 1]
+		if (new_count > max_y):
+			max_y = new_count
+		prediction_counts[l].append(new_count)
 
     # draw the activity on the output frame
 	default_color = (100, 100, 100)
@@ -99,7 +103,7 @@ while True:
 			 red if label == "weaving" else default_color, 5)
 	
 	# draw the matplotlib plot on the output frame
-	plot_img = create_plot(current_frame + 1, num_frames // 2, [
+	plot_img = create_plot(current_frame + 1, max_y + 30, [
 		{
 			"y_vals": prediction_counts["safe"],
 			"label": "safe"
