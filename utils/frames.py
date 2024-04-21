@@ -18,6 +18,7 @@ def count_frames(video_path):
     return total_frames
 
 # Example usage
-video_path = "example_clips/new_test.mp4"  # Replace with the path to your video file
-num_frames = count_frames(video_path)
-print("Total number of frames:", num_frames)
+if __name__ == "__main__":
+    video_path = "example_clips/new_test.mp4"  # Replace with the path to your video file
+    num_frames = count_frames(video_path)
+    print("Total number of frames:", num_frames)

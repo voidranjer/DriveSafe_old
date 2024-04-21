@@ -5,7 +5,8 @@ import numpy as np
 import argparse
 import pickle
 import cv2
-from live_plot import create_plot
+from utils.frames import count_frames
+from utils.plot import create_plot
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -35,17 +36,31 @@ Q = deque(maxlen=args["size"])
 vs = cv2.VideoCapture(args["input"])
 writer = None
 (W, H) = (None, None)
+num_frames = count_frames(args["input"])
+
+prediction_counts = {
+	"safe": np.zeros(num_frames),
+	"collision": np.zeros(num_frames),
+	"tailgating": np.zeros(num_frames),
+	"weaving": np.zeros(num_frames)
+}
+current_frame = 0
+
 # loop over frames from the video file stream
 while True:
 	# read the next frame from the file
 	(grabbed, frame) = vs.read()
-	# if the frame was not grabbed, then we have reached the end
-	# of the stream
+
+	# if the frame was not grabbed, then we have reached the end of the stream
 	if not grabbed:
 		break
+
 	# if the frame dimensions are empty, grab them
 	if W is None or H is None:
 		(H, W) = frame.shape[:2]
+
+	# increment the current frame
+	current_frame += 1
 		
 	# clone the output frame, then convert it from BGR to RGB
 	# ordering, resize the frame to a fixed 224x224, and then
@@ -58,11 +73,16 @@ while True:
 	# make predictions on the frame and then update the predictions queue
 	preds = model.predict(np.expand_dims(frame, axis=0))[0]
 	Q.append(preds)
+
 	# perform prediction averaging over the current history of previous predictions
 	results = np.array(Q).mean(axis=0)
 	i = np.argmax(results)
 	label = lb.classes_[i]
-	
+
+	# increment the prediction count
+	for l in lb.classes_:
+		prediction_counts[l][current_frame] = prediction_counts[l][current_frame - 1] + 1 if label == l else prediction_counts[l][current_frame - 1]
+
     # draw the activity on the output frame
 	default_color = (100, 100, 100)
 	red = (0, 0, 255)
@@ -79,17 +99,35 @@ while True:
 			 red if label == "weaving" else default_color, 5)
 	
 	# draw the matplotlib plot on the output frame
-	plot = create_plot()
-	plot = cv2.resize(plot, (W // 3, H // 3))
-	plot_img = cv2.cvtColor(plot, cv2.COLOR_RGBA2BGR)
+	plot_img = create_plot(num_frames, num_frames // 1.2, [
+		{
+			"y_vals": np.ma.masked_array(prediction_counts["safe"], np.arange(len(prediction_counts["safe"])) >= current_frame),
+			# "y_vals": prediction_counts["safe"],
+			# Mask the y-values where they are less than 0.5
 
-	# create a transparent canvas
-	canvas = np.zeros((H, W, 3), dtype="uint8")
+			"label": "safe"
+		},
+		# {
+		# 	"y_vals": prediction_counts["collision"],
+		# 	"label": "collision"
+		# },
+		# {
+		# 	"y_vals": prediction_counts["tailgating"],
+		# 	"label": "tailgating"
+		# },
+		# {
+		# 	"y_vals": prediction_counts["weaving"],
+		# 	"label": "weaving"
+		# }
+	])
 
-	# add plot to the bottom right of canvas
-	canvas[H - plot_img.shape[0]:, W - plot_img.shape[1]:W] = plot_img
+	# resize the plot image to fit the output frame, and convert the color profile
+	plot_img = cv2.resize(plot_img, (W // 3, H // 3))
+	plot_img = cv2.cvtColor(plot_img, cv2.COLOR_RGB2BGR)
 
-	output = cv2.add(output, canvas)
+	# add plot to the bottom right of the frame
+	output[H - plot_img.shape[0]:, W - plot_img.shape[1]:W] = plot_img
+	
 
 		
 	# check if the video writer is None

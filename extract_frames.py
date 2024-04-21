@@ -2,34 +2,7 @@
 import os
 import argparse
 import cv2
-
-def count_frames(video_path):
-    # Open the video file
-    cap = cv2.VideoCapture(video_path)
-
-    # Check if the video opened successfully
-    if not cap.isOpened():
-        print("Error: Could not open video file.")
-        return -1
-
-    # Initialize frame count
-    frame_count = 0
-
-    # Loop through the video frames and count them
-    while True:
-        ret, frame = cap.read()
-
-        # Check if the frame was read successfully
-        if not ret:
-            break
-
-        # Increment frame count
-        frame_count += 1
-
-    # Release the video capture object and close the video file
-    cap.release()
-
-    return frame_count
+from utils.frames import count_frames
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
