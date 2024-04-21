@@ -22,7 +22,7 @@ plots: PlotsType = [
 
 def create_plot(x_size: int, y_range: int, plots: list):
     # Generate x values
-    x = np.linspace(0, 2*np.pi, x_size)
+    x = np.arange(x_size)
 
     # Create a figure and axis
     fig, ax = plt.subplots()
@@ -36,9 +36,9 @@ def create_plot(x_size: int, y_range: int, plots: list):
     ax.legend()
 
     # Update plot label/title
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_title('Trigonometric Functions')
+    ax.set_xlabel('Number of Frames')
+    ax.set_ylabel('Cumulative Prediction Count')
+    ax.set_title('DriveSafe score over time')
 
     # Render the plot in np format
     fig.canvas.draw()

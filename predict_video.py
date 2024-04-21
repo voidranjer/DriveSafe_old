@@ -39,10 +39,10 @@ writer = None
 num_frames = count_frames(args["input"])
 
 prediction_counts = {
-	"safe": np.zeros(num_frames),
-	"collision": np.zeros(num_frames),
-	"tailgating": np.zeros(num_frames),
-	"weaving": np.zeros(num_frames)
+	"safe": [0],
+	"collision": [0],
+	"tailgating": [0],
+	"weaving": [0]
 }
 current_frame = 0
 
@@ -81,7 +81,7 @@ while True:
 
 	# increment the prediction count
 	for l in lb.classes_:
-		prediction_counts[l][current_frame] = prediction_counts[l][current_frame - 1] + 1 if label == l else prediction_counts[l][current_frame - 1]
+		prediction_counts[l].append(prediction_counts[l][current_frame - 1] + 1 if label == l else prediction_counts[l][current_frame - 1])
 
     # draw the activity on the output frame
 	default_color = (100, 100, 100)
@@ -99,26 +99,23 @@ while True:
 			 red if label == "weaving" else default_color, 5)
 	
 	# draw the matplotlib plot on the output frame
-	plot_img = create_plot(num_frames, num_frames // 1.2, [
+	plot_img = create_plot(current_frame + 1, num_frames // 2, [
 		{
-			"y_vals": np.ma.masked_array(prediction_counts["safe"], np.arange(len(prediction_counts["safe"])) >= current_frame),
-			# "y_vals": prediction_counts["safe"],
-			# Mask the y-values where they are less than 0.5
-
+			"y_vals": prediction_counts["safe"],
 			"label": "safe"
 		},
-		# {
-		# 	"y_vals": prediction_counts["collision"],
-		# 	"label": "collision"
-		# },
-		# {
-		# 	"y_vals": prediction_counts["tailgating"],
-		# 	"label": "tailgating"
-		# },
-		# {
-		# 	"y_vals": prediction_counts["weaving"],
-		# 	"label": "weaving"
-		# }
+		{
+			"y_vals": prediction_counts["collision"],
+			"label": "collision"
+		},
+		{
+			"y_vals": prediction_counts["tailgating"],
+			"label": "tailgating"
+		},
+		{
+			"y_vals": prediction_counts["weaving"],
+			"label": "weaving"
+		}
 	])
 
 	# resize the plot image to fit the output frame, and convert the color profile
