@@ -69,9 +69,11 @@ for imagePath in imagePaths:
 # convert the data and labels to NumPy arrays
 data = np.array(data)
 labels = np.array(labels)
+
 # perform one-hot encoding on the labels
 lb = LabelBinarizer()
 labels = lb.fit_transform(labels)
+
 # partition the data into training and testing splits using 75% of
 # the data for training and the remaining 25% for testing
 (trainX, testX, trainY, testY) = train_test_split(data, labels,
