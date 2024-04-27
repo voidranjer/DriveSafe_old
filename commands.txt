@@ -1,5 +1,5 @@
 Extraction
-python extract_frames.py -i input/example.mp4 -o output/frames
+python extract_frames.py -i input/example.mp4 -o output/frames -n 500
 
 Training
 python train.py --dataset data --model model/drivesafe.keras --label-bin model/labels.pickle --epochs 50

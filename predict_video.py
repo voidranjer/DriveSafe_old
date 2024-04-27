@@ -42,7 +42,8 @@ prediction_counts = {
 	"safe": [0],
 	"collision": [0],
 	"tailgating": [0],
-	"weaving": [0]
+	"weaving": [0],
+	"off": [0]
 }
 current_frame = 0
 max_y = 0
