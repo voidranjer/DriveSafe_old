@@ -1,8 +1,8 @@
 Extraction
-python extract_frames.py -i raw/safe2.mp4 -o data/safe
+python extract_frames.py -i input/example.mp4 -o output/frames
 
 Training
-python train.py --dataset data --model model/drivesafe.h5 --label-bin model/labels.pickle --epochs 50
+python train.py --dataset data --model model/drivesafe.keras --label-bin model/labels.pickle --epochs 50
 
 Predicting
-python predict_video.py --model model/drivesafe.h5 --label-bin model/labels.pickle --input example_clips/input.mp4 --output output/output.avi --size 1
+python predict_video.py --model model/drivesafe.keras --label-bin model/labels.pickle --input input/test.mp4 --output output/output.avi --size 1

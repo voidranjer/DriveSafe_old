@@ -2,6 +2,9 @@
 .DS_Store
 gitignore/
 example_clips/
+data/
+input/
+output/
 
 
 # Byte-compiled / optimized / DLL files

@@ -21,8 +21,8 @@ if not os.path.exists(args["output"]):
 # count interval to extract frames depending on video length
 total_frames = count_frames(args["input"])
 interval = total_frames // args["num_frames"]
-print(f"Total frames: {total_frames}")
-print(f"Interval: {interval}")
+print(f"[INFO] Total frames: {total_frames}")
+print(f"[INFO] Interval: {interval}")
 
 # initialize the video stream, pointer to output video file, and
 # frame dimensions

@@ -6,7 +6,7 @@ def count_frames(video_path):
 
     # Check if the video opened successfully
     if not cap.isOpened():
-        print("Error: Could not open video")
+        print("[ERROR] Could not open video")
         return -1
 
     # Get the total number of frames in the video
