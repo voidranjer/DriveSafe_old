@@ -32,7 +32,7 @@ def get_labeled_data(data_dir: str, validation_dir: str, LABELS: set):
             # load the image, convert it to RGB channel ordering, and resize
             # it to be a fixed 224x224 pixels, ignoring aspect ratio
             image = cv2.imread(image_path)
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             image = cv2.resize(image, (224, 224))
 
             # update the data and labels lists, respectively
@@ -47,7 +47,7 @@ def get_labeled_data(data_dir: str, validation_dir: str, LABELS: set):
     return training_data, training_labels, validation_data, validation_labels
 
 
-def get_sequence_data(dataset_path: str, target_labels: set, num_frames: int):
+def get_sequence_data(dataset_path: str, target_labels: set, frames_per_seq: int):
     data = {
         "training": [],
         "validation": []
@@ -66,12 +66,12 @@ def get_sequence_data(dataset_path: str, target_labels: set, num_frames: int):
             sequence = []
             for img_path in sorted(image_paths):
                 image = cv2.imread(img_path)
-                image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # Is this really necessary??
+                # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # Is this really necessary??
                 image = cv2.resize(image, (224, 224))  # Resize image if necessary
                 sequence.append(image)
                 
                 # If we have enough frames, append the sequence to the data and labels
-                if len(sequence) == num_frames:  # Assuming N frames per sequence
+                if len(sequence) == frames_per_seq:  # Assuming N frames per sequence
                     data[mode].append(sequence)
                     labels[mode].append(label)
                     sequence = []
